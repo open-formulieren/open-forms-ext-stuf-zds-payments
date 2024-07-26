@@ -1,0 +1,8 @@
+include *.rst
+include LICENSE
+include stuf_zds_payments/py.typed
+recursive-include stuf_zds_payments *.html
+recursive-include stuf_zds_payments *.txt
+recursive-include stuf_zds_payments *.po
+global-exclude __pycache__
+global-exclude *.py[co]
