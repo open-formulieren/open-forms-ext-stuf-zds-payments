@@ -19,7 +19,8 @@ jobs:
         django: ['4.2']
 
     name: Run the test suite (Python ${{ matrix.python }}, Django ${{ matrix.django }})
-
+    env:
+      PIP_CONSTRAINT: pip-constraints.txt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -21,6 +21,8 @@ jobs:
     strategy:
       matrix:
         toxenv: [isort, black, flake8, docs]
+    env:
+      PIP_CONSTRAINT: pip-constraints.txt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
