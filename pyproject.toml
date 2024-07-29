@@ -45,6 +45,7 @@ tests = [
     "isort",
     "black",
     "flake8",
+    "vcrpy",
 ]
 docs = [
     "sphinx",
