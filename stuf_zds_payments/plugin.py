@@ -30,6 +30,7 @@ def default_payment_status_update_mapping() -> list[dict[str, str]]:
             "form_variable": "payment_public_order_ids",
             "stuf_name": "payment_public_order_ids",
         },
+        {"form_variable": "provider_payment_ids", "stuf_name": "provider_payment_ids"},
     ]
 
 
@@ -97,7 +98,12 @@ class StufZDSPaymentsRegistration(StufZDSRegistration):
                 variables_registry=variables_registry,
             )
             if variable.key
-            in ["payment_completed", "payment_amount", "payment_public_order_ids"]
+            in [
+                "payment_completed",
+                "payment_amount",
+                "payment_public_order_ids",
+                "provider_payment_ids",
+            ]
             and variable.key in key_mapping
         }
 
