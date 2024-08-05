@@ -113,12 +113,22 @@ class StufZDSPaymentsRegistrationTestCase(OFVCRMixin, TestCase):
             amount=Decimal("25.00"),
             public_order_id="foo",
             status=PaymentStatus.completed,
+            provider_payment_id="123456",
         )
         SubmissionPaymentFactory.create(
             submission=cls.submission,
             amount=Decimal("15.00"),
             public_order_id="bar",
-            status=PaymentStatus.completed,
+            status=PaymentStatus.registered,
+            provider_payment_id="654321",
+        )
+        # failed payment, should be ignored
+        SubmissionPaymentFactory.create(
+            submission=cls.submission,
+            amount=Decimal("15.00"),
+            public_order_id="baz",
+            status=PaymentStatus.failed,
+            provider_payment_id="6789",
         )
 
     def test_set_zaak_payment(self):
@@ -141,6 +151,10 @@ class StufZDSPaymentsRegistrationTestCase(OFVCRMixin, TestCase):
             <StUF:extraElement naam="payment_public_order_ids.0">foo</StUF:extraElement>
 
             <StUF:extraElement naam="payment_public_order_ids.1">bar</StUF:extraElement>
+
+            <StUF:extraElement naam="provider_payment_ids.0">123456</StUF:extraElement>
+
+            <StUF:extraElement naam="provider_payment_ids.1">654321</StUF:extraElement>
 
             </StUF:extraElementen>"""
         )
@@ -206,6 +220,10 @@ class StufZDSPaymentsRegistrationTestCase(OFVCRMixin, TestCase):
             <StUF:extraElement naam="payment_public_order_ids.0">foo</StUF:extraElement>
 
             <StUF:extraElement naam="payment_public_order_ids.1">bar</StUF:extraElement>
+
+            <StUF:extraElement naam="provider_payment_ids.0">123456</StUF:extraElement>
+
+            <StUF:extraElement naam="provider_payment_ids.1">654321</StUF:extraElement>
 
             </StUF:extraElementen>"""
         )
