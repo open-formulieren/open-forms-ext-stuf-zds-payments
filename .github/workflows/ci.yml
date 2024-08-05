@@ -10,40 +10,84 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: openformulieren/open-forms-ext-stuf-zds-payments
+
 jobs:
   tests:
+    name: Run the Django test suite
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: ['3.10', '3.11', '3.12']
-        django: ['4.2']
-
-    name: Run the test suite (Python ${{ matrix.python }}, Django ${{ matrix.django }})
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        # Needed because the postgres container does not provide a healthcheck
+        options:
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+          --name postgres
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Open Forms
+        uses: actions/checkout@v4
         with:
-          python-version: ${{ matrix.python }}
+          repository: open-formulieren/open-forms
+          path: open-forms
 
-      - name: Install dependencies
-        run: pip install tox tox-gh-actions
+      - name: Checkout StUF-ZDS payments extension
+        uses: actions/checkout@v4
+        with:
+          path: extension
+
+      - name: Set up backend environment
+        uses: maykinmedia/setup-django-backend@v1.1
+        with:
+          apt-packages: 'libxml2 libxmlsec1 libxmlsec1-openssl gettext postgresql-client gdal-bin'
+          python-version: '3.12'
+          optimize-postgres: 'yes'
+          pg-service: 'postgres'
+          setup-node: 'yes'
+          nvmrc-custom-dir: 'open-forms'
+          npm-ci-flags: '--legacy-peer-deps'
+          working-directory: ${{ github.workspace }}/open-forms
+
+      - name: Make symlink in OF to the extension
+        run: |
+          ln -s ${{ github.workspace }}/extension/stuf_zds_payments ${{ github.workspace }}/open-forms/src
 
       - name: Run tests
-        run: tox
+        run: |
+          export OPEN_FORMS_EXTENSIONS=stuf_zds_payments
+
+          python src/manage.py compilemessages
+          coverage run --source=stuf_zds_payments src/manage.py test stuf_zds_payments
+          coverage combine
+          coverage xml -o coverage-extension.xml
         env:
-          PYTHON_VERSION: ${{ matrix.python }}
-          DJANGO: ${{ matrix.django }}
+          DJANGO_SETTINGS_MODULE: openforms.conf.ci
+          SECRET_KEY: dummy
+          DB_USER: postgres
+          DB_PASSWORD: ''
+        working-directory: ${{ github.workspace }}/open-forms
 
       - name: Publish coverage report
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          root_dir: ${{ github.workspace }}/extension
+          working-directory: ${{ github.workspace }}/open-forms
+          files: ./coverage-extension.xml
 
   publish:
     name: Publish package to PyPI
     runs-on: ubuntu-latest
-    needs: tests
+    needs:
+      - tests
     environment: release
     permissions:
       id-token: write
@@ -54,13 +98,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
       - name: Build sdist and wheel
         run: |
-          pip install build --upgrade
-          python -m build
-
+          pip install pip build --upgrade
+          python -m build --sdist --wheel
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-

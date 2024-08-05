@@ -1,0 +1,21 @@
+{% extends "stuf/soap_envelope.xml" %}{% load stuf %}
+{% block body %}
+{# Parent template already defines some common namespaces #}
+<ZKN:zakLk01 xmlns:ZKN="http://www.egem.nl/StUF/sector/zkn/0310">
+    <ZKN:stuurgegevens>
+        <StUF:berichtcode>Lk01</StUF:berichtcode>
+        {% render_stuurgegevens stuurgegevens referentienummer %}
+        <StUF:entiteittype>ZAK</StUF:entiteittype>
+    </ZKN:stuurgegevens>
+    <ZKN:parameters>
+        <StUF:mutatiesoort>W</StUF:mutatiesoort>
+        <StUF:indicatorOvername>V</StUF:indicatorOvername>
+    </ZKN:parameters>
+    <ZKN:object StUF:verwerkingssoort="W" StUF:entiteittype="ZAK">
+        <ZKN:identificatie>{{ zaak_identificatie }}</ZKN:identificatie>
+        {% if betalings_indicatie %}<ZKN:betalingsIndicatie>{{ betalings_indicatie }}</ZKN:betalingsIndicatie>{% endif %}
+        {% if laatste_betaaldatum %}<ZKN:laatsteBetaaldatum>{{ laatste_betaaldatum }}</ZKN:laatsteBetaaldatum>{% endif %}
+
+        {% include "stuf_zds/soap/includes/extraElementen.xml" %}
+    </ZKN:object>
+</ZKN:zakLk01>{% endblock %}

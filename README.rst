@@ -6,7 +6,7 @@ Welcome to stuf_zds_payments's documentation!
 :Version: 0.1.0
 :Source: https://github.com/maykinmedia/stuf_zds_payments
 :Keywords: ``<keywords>``
-:PythonVersion: 3.10
+:PythonVersion: 3.12
 
 |build-status| |code-quality| |black| |coverage| |docs|
 
@@ -30,7 +30,7 @@ Installation
 Requirements
 ------------
 
-* Python 3.10 or above
+* Python 3.12 or above
 * Django 4.2 or newer
 
 
