@@ -21,13 +21,11 @@ jobs:
     strategy:
       matrix:
         toxenv: [isort, black, flake8]
-    env:
-      PIP_CONSTRAINT: pip-constraints.txt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install dependencies
         run: pip install tox
       - run: tox

@@ -35,20 +35,20 @@ jobs:
 
     steps:
       - name: Checkout Open Forms
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: open-formulieren/open-forms
           path: open-forms
 
       - name: Checkout StUF-ZDS payments extension
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: extension
 
       - name: Set up backend environment
         uses: maykinmedia/setup-django-backend@v1.1
         with:
-          apt-packages: 'libxml2-dev libxmlsec1-dev libxmlsec1-openssl gettext postgresql-client gdal-bin'
+          apt-packages: 'libxml2 libxmlsec1 libxmlsec1-openssl gettext postgresql-client gdal-bin'
           python-version: '3.12'
           optimize-postgres: 'yes'
           pg-service: 'postgres'
@@ -77,71 +77,32 @@ jobs:
         working-directory: ${{ github.workspace }}/open-forms
 
       - name: Publish coverage report
-        uses: codecov/codecov-action@v3.1.4
+        uses: codecov/codecov-action@v4
         with:
           root_dir: ${{ github.workspace }}/extension
           working-directory: ${{ github.workspace }}/open-forms
           files: ./coverage-extension.xml
-
-  docker_build:
-    name: Build Docker image
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set tag
-        id: vars
-        run: |
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name (if present at all)
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "main" ] && VERSION=latest
-
-          # PRs result in version 'merge' -> transform that into 'latest'
-          [ "$VERSION" == "merge" ] && VERSION=latest
-
-          echo ::set-output name=tag::${VERSION}
-
-      - name: Build the Docker image
-        run: |
-          docker build . \
-            --tag $IMAGE_NAME:$RELEASE_VERSION
-        env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-
-      - run: docker image save -o image.tar $IMAGE_NAME:${{ steps.vars.outputs.tag }}
-      - name: Store image artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: docker-image
-          path: image.tar
-          retention-days: 1
 
   publish:
     name: Publish package to PyPI
     runs-on: ubuntu-latest
     needs:
       - tests
-      - docker_build
+    environment: release
+    permissions:
+      id-token: write
 
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Build sdist and wheel
         run: |
-          pip install pip setuptools wheel --upgrade
-          python setup.py sdist bdist_wheel
+          pip install pip build --upgrade
+          python -m build --sdist --wheel
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}

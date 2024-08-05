@@ -16,6 +16,6 @@
         {% if betalings_indicatie %}<ZKN:betalingsIndicatie>{{ betalings_indicatie }}</ZKN:betalingsIndicatie>{% endif %}
         {% if laatste_betaaldatum %}<ZKN:laatsteBetaaldatum>{{ laatste_betaaldatum }}</ZKN:laatsteBetaaldatum>{% endif %}
 
-        {{ payment_status_update_xml }}
+        {% include "stuf_zds/soap/includes/extraElementen.xml" %}
     </ZKN:object>
 </ZKN:zakLk01>{% endblock %}

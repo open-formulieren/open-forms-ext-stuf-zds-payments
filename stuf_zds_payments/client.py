@@ -17,7 +17,7 @@ from stuf.stuf_zds.models import StufZDSConfig
 
 
 class ZaakOptions(ZaakOptions):
-    payment_status_update_xml: dict
+    payment_status_update_mapping: list[dict]
 
 
 class Client(_Client):
@@ -25,14 +25,14 @@ class Client(_Client):
         self,
         zaak_identificatie: str,
         partial: bool = False,
-        payment_status_update_xml: str | None = None,
+        extra: dict | None = None,
     ) -> dict:
         data = {
             "betalings_indicatie": (
                 PaymentStatus.PARTIAL if partial else PaymentStatus.FULL
             ),
             "laatste_betaaldatum": fmt_soap_date(timezone.now()),
-            "payment_status_update_xml": payment_status_update_xml,
+            "extra": extra,
         }
         return self.partial_update_zaak(zaak_identificatie, data)
 

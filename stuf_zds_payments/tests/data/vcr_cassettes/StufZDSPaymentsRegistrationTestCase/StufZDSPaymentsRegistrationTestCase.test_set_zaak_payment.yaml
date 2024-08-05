@@ -6,15 +6,16 @@ interactions:
       \       \n\n<ZKN:zakLk01 xmlns:ZKN=\"http://www.egem.nl/StUF/sector/zkn/0310\">\n
       \   <ZKN:stuurgegevens>\n        <StUF:berichtcode>Lk01</StUF:berichtcode>\n
       \       <StUF:zender>\n    <StUF:organisatie>zender_organisatie-0</StUF:organisatie>\n<StUF:applicatie>zender_applicatie-0</StUF:applicatie>\n<StUF:administratie>zender_administratie-0</StUF:administratie>\n<StUF:gebruiker>zender_gebruiker-0</StUF:gebruiker>\n\n</StUF:zender>\n<StUF:ontvanger>\n
-      \   <StUF:organisatie>ontvanger_organisatie-0</StUF:organisatie>\n<StUF:applicatie>ontvanger_applicatie-0</StUF:applicatie>\n<StUF:administratie>ontvanger_administratie-0</StUF:administratie>\n<StUF:gebruiker>ontvanger_gebruiker-0</StUF:gebruiker>\n\n</StUF:ontvanger>\n<StUF:referentienummer>8c5044a5-b869-4d15-85d8-8b0ada0d20a3</StUF:referentienummer>\n<StUF:tijdstipBericht>20240729120144</StUF:tijdstipBericht>\n\n
+      \   <StUF:organisatie>ontvanger_organisatie-0</StUF:organisatie>\n<StUF:applicatie>ontvanger_applicatie-0</StUF:applicatie>\n<StUF:administratie>ontvanger_administratie-0</StUF:administratie>\n<StUF:gebruiker>ontvanger_gebruiker-0</StUF:gebruiker>\n\n</StUF:ontvanger>\n<StUF:referentienummer>a62fad4a-01c0-46ad-98a7-49592c88b21e</StUF:referentienummer>\n<StUF:tijdstipBericht>20240805124256</StUF:tijdstipBericht>\n\n
       \       <StUF:entiteittype>ZAK</StUF:entiteittype>\n    </ZKN:stuurgegevens>\n
       \   <ZKN:parameters>\n        <StUF:mutatiesoort>W</StUF:mutatiesoort>\n        <StUF:indicatorOvername>V</StUF:indicatorOvername>\n
       \   </ZKN:parameters>\n    <ZKN:object StUF:verwerkingssoort=\"W\" StUF:entiteittype=\"ZAK\">\n
       \       <ZKN:identificatie>1234</ZKN:identificatie>\n        <ZKN:betalingsIndicatie>Geheel</ZKN:betalingsIndicatie>\n
-      \       <ZKN:laatsteBetaaldatum>20240729</ZKN:laatsteBetaaldatum>\n\n        <StUF:extraElementen>\n
-      \   <StUF:extraElement naam=\"payment_completed\">true</StUF:extraElement>\n
-      \   <StUF:extraElement naam=\"payment_amount\">40.0</StUF:extraElement>\n    <StUF:extraElement
-      naam=\"payment_public_order_ids\">foo bar</StUF:extraElement>\n</StUF:extraElementen>\n
+      \       <ZKN:laatsteBetaaldatum>20240805</ZKN:laatsteBetaaldatum>\n\n        <StUF:extraElementen>\n\n<StUF:extraElement
+      naam=\"language_code\">en</StUF:extraElement>\n\n<StUF:extraElement naam=\"extra\">BuzzBazz</StUF:extraElement>\n\n<StUF:extraElement
+      naam=\"payment_completed\">true</StUF:extraElement>\n\n<StUF:extraElement naam=\"payment_amount\">40.0</StUF:extraElement>\n\n<StUF:extraElement
+      naam=\"payment_public_order_ids.0\">foo</StUF:extraElement>\n\n<StUF:extraElement
+      naam=\"payment_public_order_ids.1\">bar</StUF:extraElement>\n\n</StUF:extraElementen>\n\n\n
       \   </ZKN:object>\n</ZKN:zakLk01>\n    </soapenv:Body>\n</soapenv:Envelope>\n"
     headers:
       Accept:
@@ -24,7 +25,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1975'
+      - '2171'
       Content-Type:
       - application/soap+xml
       SOAPAction:
@@ -57,7 +58,7 @@ interactions:
       Content-Type:
       - text/xml
       Date:
-      - Mon, 29 Jul 2024 12:01:44 GMT
+      - Mon, 05 Aug 2024 12:42:56 GMT
       Server:
       - Werkzeug/3.0.3 Python/3.12.4
     status:

@@ -1,17 +1,15 @@
 import logging
 from typing import Any
 
-from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from openforms.registrations.contrib.stuf_zds.plugin import (
     StufZDSRegistration,
     ZaakOptionsSerializer,
 )
+from openforms.registrations.contrib.stuf_zds.utils import flatten_data
 from openforms.registrations.registry import register
 from openforms.submissions.models import Submission
-from openforms.template import render_from_string
-from openforms.template.validators import DjangoTemplateValidator
 from openforms.variables.service import get_static_variables
 from rest_framework import serializers
 from stuf.stuf_zds.client import ZaakOptions
@@ -24,36 +22,46 @@ logger = logging.getLogger(__name__)
 PLUGIN_IDENTIFIER = "stuf-zds-create-zaak:ext-utrecht"
 
 
-def get_payment_status_update_text() -> str:
-    return render_to_string(
-        "registrations/contrib/stuf_zds_payments/payment_status_update_xml.txt"
-    ).strip()
+def default_payment_status_update_mapping() -> list[dict[str, str]]:
+    return [
+        {"form_variable": "payment_completed", "stuf_name": "payment_completed"},
+        {"form_variable": "payment_amount", "stuf_name": "payment_amount"},
+        {
+            "form_variable": "payment_public_order_ids",
+            "stuf_name": "payment_public_order_ids",
+        },
+    ]
 
 
 def prepare_value(value: Any):
     match value:
         case bool():
             return "true" if value else "false"
-        case list():
-            return " ".join(value)
         case float():
             return str(value)
         case _:
             return value
 
 
+class MappingSerializer(serializers.Serializer):
+    form_variable = serializers.CharField(
+        help_text=_("The name of the form variable to be mapped")
+    )
+    stuf_name = serializers.CharField(
+        help_text=_("The name in StUF-ZDS to which the form variable should be mapped"),
+        label=_("StUF-ZDS name"),
+    )
+
+
 class ZaakPaymentOptionsSerializer(ZaakOptionsSerializer):
-    payment_status_update_xml = serializers.CharField(
-        label=_("payment status update XML template"),
+    payment_status_update_mapping = MappingSerializer(
+        many=True,
+        label=_("payment status update variable mapping"),
         help_text=_(
-            "This template is evaluated with the submission data and the resulting XML "
-            "is sent to the StUF-ZDS with a PATCH to update the payment field."
+            "This mapping is used to map the variable keys to keys used in the XML "
+            "that is sent to StUF-ZDS. Those keys and the values belonging to them in "
+            "the submission data are included in extraElementen."
         ),
-        validators=[
-            DjangoTemplateValidator(
-                backend="openforms.template.openforms_backend",
-            ),
-        ],
         required=False,
     )
 
@@ -61,9 +69,12 @@ class ZaakPaymentOptionsSerializer(ZaakOptionsSerializer):
     def display_as_jsonschema(cls):
         data = super().display_as_jsonschema()
         # Workaround because drf_jsonschema_serializer does not pick up defaults
-        data["properties"]["payment_status_update_xml"][
+        data["properties"]["payment_status_update_mapping"][
             "default"
-        ] = get_payment_status_update_text()
+        ] = default_payment_status_update_mapping()
+        # To avoid duplicating the title and help text for each item
+        del data["properties"]["payment_status_update_mapping"]["items"]["title"]
+        del data["properties"]["payment_status_update_mapping"]["items"]["description"]
         return data
 
 
@@ -72,23 +83,50 @@ class StufZDSPaymentsRegistration(StufZDSRegistration):
     verbose_name = _("StUF-ZDS (payments)")
     configuration_options = ZaakPaymentOptionsSerializer
 
-    def update_payment_status(self, submission: "Submission", options: ZaakOptions):
-        values = {
-            variable.key: prepare_value(variable.initial_value)
+    def get_extra_payment_variables(
+        self, submission: "Submission", options: ZaakOptions
+    ):
+        key_mapping = {
+            mapping["form_variable"]: mapping["stuf_name"]
+            for mapping in options["payment_status_update_mapping"]
+        }
+        return {
+            key_mapping[variable.key]: prepare_value(variable.initial_value)
             for variable in get_static_variables(
                 submission=submission,
                 variables_registry=variables_registry,
             )
             if variable.key
             in ["payment_completed", "payment_amount", "payment_public_order_ids"]
+            and variable.key in key_mapping
         }
 
-        payment_status_update_xml = render_from_string(
-            options["payment_status_update_xml"], values
-        )
+    def get_extra_data(
+        self, submission: Submission, options: ZaakOptions
+    ) -> dict[str, Any]:
+        """
+        Overridden to ensure the extra payment variables are sent as extraElementen
+        when creating the Zaak
+        """
+        data = super().get_extra_data(submission, options)
+        payment_extra = self.get_extra_payment_variables(submission, options)
+        return {**data, **payment_extra}
+
+    def update_payment_status(self, submission: "Submission", options: ZaakOptions):
+        extra_data = self.get_extra_data(submission, options)
+        # The extraElement tag of StUF-ZDS expects primitive types
+        extra_data = flatten_data(extra_data)
+
+        class LangInjection:
+            """Ensures the first extra element is the submission language
+            and isn't shadowed by a form field with the same key"""
+
+            def items(self):
+                yield ("language_code", submission.language_code)
+                yield from extra_data.items()
 
         with get_client(options) as client:
             client.set_zaak_payment(
                 submission.registration_result["zaak"],
-                payment_status_update_xml=payment_status_update_xml,
+                extra=LangInjection(),
             )
