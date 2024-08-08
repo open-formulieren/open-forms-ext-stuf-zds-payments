@@ -39,8 +39,6 @@ jobs:
         with:
           repository: open-formulieren/open-forms
           path: open-forms
-          # TODO remove after this is merged
-          ref: feature/4380-ogone-payment-id
 
       - name: Checkout StUF-ZDS payments extension
         uses: actions/checkout@v4
