@@ -1,18 +1,18 @@
 
 
-Welcome to stuf_zds_payments's documentation!
+Welcome to open-forms-ext-stuf-zds-payments's documentation!
 =================================================
 
 :Version: 0.1.0
-:Source: https://github.com/maykinmedia/stuf_zds_payments
+:Source: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments
 :Keywords: ``<keywords>``
-:PythonVersion: 3.10
+:PythonVersion: 3.10, 3.12
 
 |build-status| |code-quality| |black| |coverage| |docs|
 
 |python-versions| |django-versions| |pypi-version|
 
-<One liner describing the project>
+Extra payment attributes for Open Forms StUF-ZDS registration backend
 
 .. contents::
 
@@ -21,8 +21,7 @@ Welcome to stuf_zds_payments's documentation!
 Features
 ========
 
-* ...
-* ...
+* Extra payment attributes for Open Forms StUF-ZDS registration backend
 
 Installation
 ============
@@ -30,7 +29,7 @@ Installation
 Requirements
 ------------
 
-* Python 3.12 or above
+* Python 3.10/3.12 or above
 * Django 4.2 or newer
 
 
@@ -39,7 +38,7 @@ Install
 
 .. code-block:: bash
 
-    pip install stuf_zds_payments
+    pip install open-forms-ext-stuf-zds-payments
 
 
 Usage
@@ -67,28 +66,28 @@ directory to the python path (or use ``python -m django <command>``):
     # django-admin makemessages -l nl
 
 
-.. |build-status| image:: https://github.com/maykinmedia/stuf_zds_payments/workflows/Run%20CI/badge.svg
+.. |build-status| image:: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments/workflows/Run%20CI/badge.svg
     :alt: Build status
-    :target: https://github.com/maykinmedia/stuf_zds_payments/actions?query=workflow%3A%22Run+CI%22
+    :target: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments/actions?query=workflow%3A%22Run+CI%22
 
-.. |code-quality| image:: https://github.com/maykinmedia/stuf_zds_payments/workflows/Code%20quality%20checks/badge.svg
+.. |code-quality| image:: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments/workflows/Code%20quality%20checks/badge.svg
      :alt: Code quality checks
-     :target: https://github.com/maykinmedia/stuf_zds_payments/actions?query=workflow%3A%22Code+quality+checks%22
+     :target: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments/actions?query=workflow%3A%22Code+quality+checks%22
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. |coverage| image:: https://codecov.io/gh/maykinmedia/stuf_zds_payments/branch/main/graph/badge.svg
-    :target: https://codecov.io/gh/maykinmedia/stuf_zds_payments
+.. |coverage| image:: https://codecov.io/gh/open-formulieren/open-forms-ext-stuf-zds-payments/branch/main/graph/badge.svg
+    :target: https://codecov.io/gh/open-formulieren/open-forms-ext-stuf-zds-payments
     :alt: Coverage status
 
 .. |docs| image:: https://readthedocs.org/projects/stuf_zds_payments/badge/?version=latest
     :target: https://stuf_zds_payments.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. |python-versions| image:: https://img.shields.io/pypi/pyversions/stuf_zds_payments.svg
+.. |python-versions| image:: https://img.shields.io/pypi/pyversions/open-forms-ext-stuf-zds-payments.svg
 
-.. |django-versions| image:: https://img.shields.io/pypi/djversions/stuf_zds_payments.svg
+.. |django-versions| image:: https://img.shields.io/pypi/djversions/open-forms-ext-stuf-zds-payments.svg
 
-.. |pypi-version| image:: https://img.shields.io/pypi/v/stuf_zds_payments.svg
-    :target: https://pypi.org/project/stuf_zds_payments/
+.. |pypi-version| image:: https://img.shields.io/pypi/v/open-forms-ext-stuf-zds-payments.svg
+    :target: https://pypi.org/project/open-forms-ext-stuf-zds-payments/
