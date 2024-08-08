@@ -6,7 +6,7 @@ Welcome to stuf_zds_payments's documentation!
 :Version: 0.1.0
 :Source: https://github.com/maykinmedia/stuf_zds_payments
 :Keywords: ``<keywords>``
-:PythonVersion: 3.12
+:PythonVersion: 3.10
 
 |build-status| |code-quality| |black| |coverage| |docs|
 
