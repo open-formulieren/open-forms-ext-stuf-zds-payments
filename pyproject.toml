@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "open-forms-ext-stuf-zds-payments"
-version = "0.1.0"
-description = "TODO"
+version = "0.2.0"
+description = "Extra payment attributes for Open Forms StUF-ZDS registration backend"
 authors = [
     {name = "Maykin Media", email = "support@maykinmedia.nl"}
 ]
 readme = "README.rst"
 license = {file = "LICENSE"}
-keywords = ["TODO"]
+keywords = ["openforms", "payments", "stufzds"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Framework :: Django",
@@ -71,7 +71,7 @@ testpaths = ["tests"]
 DJANGO_SETTINGS_MODULE = "testapp.settings"
 
 [tool.bumpversion]
-current_version = "0.1.0"
+current_version = "0.2.0"
 files = [
     {filename = "pyproject.toml"},
     {filename = "README.rst"},
