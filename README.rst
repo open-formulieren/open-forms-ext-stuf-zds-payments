@@ -1,7 +1,7 @@
 
 
 Welcome to open-forms-ext-stuf-zds-payments's documentation!
-=================================================
+============================================================
 
 :Version: 0.2.0
 :Source: https://github.com/open-formulieren/open-forms-ext-stuf-zds-payments
